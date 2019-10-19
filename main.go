@@ -3,13 +3,11 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
-	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	//"github.com/gorilla/handlers"
-	//"time"
+	"github.com/gorilla/handlers"
 )
 
 func main() {
@@ -40,41 +38,32 @@ func main() {
 
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
-			//handle read response error
+
 		}
 
 		//result := decrypt([]byte(string(body)))
 
-		if string(body) == "17b84c8330f86af407ec45cd1ac3e9bc183d38d3c13d64ff06fbd699ccb3c69e" && hasLoaded == false {
-
-			router.StaticFS("/dash", http.Dir("./login/build1"))
-			hasLoaded = true
-
+		if string(body) == "17b84c8330f86af407ec45cd1ac3e9bc183d38d3c13d64ff06fbd699ccb3c69e" {
+			if hasLoaded == false {
+				router.StaticFS("/dash", http.Dir("./login/build1"))
+				hasLoaded = true
+			}
+		} else {
+			c.Writer.WriteHeader(403)
 		}
 
 		fmt.Printf("%s\n", string(body))
 
 		//fmt.Printf("%s\n", string(result))
-
 	})
 
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
-		AllowMethods:     []string{"GET", "POST", "OPTIONS", "HEAD", "PUT"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "X-Requested-With", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length", "Content-Type"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://localhost"
-		},
-		MaxAge: 12 * time.Hour,
-	}))
-
-	//router.Use(cors.Default())
-
-	router.Run(":5000")
-
-	//log.Fatal(http.ListenAndServe(":5000", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
+	log.Fatal(http.ListenAndServe(
+		":5000",
+		handlers.CORS(handlers.AllowedHeaders(
+			[]string{"X-Requested-With", "Content-Type", "Authorization"}),
+			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
+			handlers.AllowedOrigins([]string{"*"}))(router),
+	))
 
 }
 
