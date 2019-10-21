@@ -54,7 +54,7 @@ func main() {
 
 	// Serve frontend static login page file
 
-	router.StaticFS("/hi/", http.Dir("./login/build"))
+	router.StaticFS("/login/", http.Dir("./login/logbuild"))
 
 	router.POST("/", func(c *gin.Context) {
 
@@ -82,7 +82,7 @@ func main() {
 
 		if string(bytes.TrimRight(message, "")) == "17b84c8330f86af407ec45cd1ac3e9bc183d38d3c13d64ff06fbd699ccb3c69e" {
 			if hasLoaded == false {
-				router.StaticFS("/dash", http.Dir("./login/build1"))
+				router.StaticFS("/dash", http.Dir("./landingPage/build"))
 				hasLoaded = true
 			}
 		} else {
